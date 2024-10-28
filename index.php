@@ -54,7 +54,7 @@ class CdrApiClient {
      * @param string $challengeKey The challenge key received from sendChallengeAction
      * @return array The decoded login response including the cookie
      */
-    public function setUcmConnection(string $challengeKey) {
+    private function setUcmConnection(string $challengeKey) {
         $md5Hash = md5($challengeKey . $this->password);
 
         $body = [
@@ -76,7 +76,7 @@ class CdrApiClient {
      * @param string $cookieKey The session cookie from setUcmConnection
      * @return array|null The decoded CDR list in JSON format or null on failure
      */
-    public function getCdrList(string $cookieKey) {
+    private function getCdrList(string $cookieKey) {
         $body = [
             "request" => [
                 "action" => "cdrapi",
@@ -121,7 +121,28 @@ class CdrApiClient {
         curl_close($ch);
         return $response;
     }
+
+    public function fetchCdrList() {
+        $response = $this->sendChallengeAction();
+    
+        if ($response === '403') {
+            return [
+                "status" => "403",
+                "statusText" => "Forbidden",
+                "name" => "HttpErrorResponse"
+            ];
+        }
+    
+        $challengeKey = $response['response']['challenge'];
+        $loginResponse = $this->setUcmConnection($challengeKey);
+        $cookie = $loginResponse['response']['cookie'];
+    
+        return $this->getCdrList($cookie);
+    }
 }
+
+
+
 
 // Initialize API client
 $client = new CdrApiClient();
@@ -130,14 +151,7 @@ $client = new CdrApiClient();
 $response = $client->sendChallengeAction();
 
 if ($response !== '403') {
-    $challengeKey = $response['response']['challenge'];
-
-    // Establish connection and get session cookie
-    $loginResponse = $client->setUcmConnection($challengeKey);
-    $cookie = $loginResponse['response']['cookie'];
-
-    // Retrieve and output the CDR list
-    $cdrList = $client->getCdrList($cookie);
+    $cdrList = $client->fetchCdrList();
     echo json_encode($cdrList);
 } else {
     // Error response if access is forbidden
