@@ -81,7 +81,9 @@ class CdrApiClient {
             "request" => [
                 "action" => "cdrapi",
                 "cookie" => $cookieKey,
-                "format" => "json"
+                "format" => "json",
+                "startTime" => date("Y-m-d", strtotime("-30 days")),
+                "endTime" => date("Y-m-d\TH:i")
             ]
         ];
 
