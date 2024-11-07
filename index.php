@@ -77,13 +77,16 @@ class CdrApiClient {
      * @return array|null The decoded CDR list in JSON format or null on failure
      */
     private function getCdrList(string $cookieKey) {
+        $startTime = isset($_GET['startTime']) ? $_GET['startTime'] : date("Y-m-d", strtotime("-1 month"));
+        $endTime = isset($_GET['endTime']) ? $_GET['endTime'] : date("Y-m-d\TH:i");
+
         $body = [
             "request" => [
                 "action" => "cdrapi",
                 "cookie" => $cookieKey,
                 "format" => "json",
-                "startTime" => date("Y-m-d", strtotime("-30 days")),
-                "endTime" => date("Y-m-d\TH:i")
+                "startTime" => $startTime,
+                "endTime" => $endTime
             ]
         ];
 
