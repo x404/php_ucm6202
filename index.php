@@ -77,17 +77,32 @@ class CdrApiClient {
      * @return array|null The decoded CDR list in JSON format or null on failure
      */
     private function getCdrList(string $cookieKey) {
-        $startTime = isset($_GET['startTime']) ? $_GET['startTime'] : date("Y-m-d", strtotime("-1 month"));
-        $endTime = isset($_GET['endTime']) ? $_GET['endTime'] : date("Y-m-d\TH:i");
+        $params = $_GET;
 
+
+        // $startTime = isset($_GET['startTime']) ? $_GET['startTime'] : date("Y-m-d", strtotime("-1 month"));
+        // $endTime = isset($_GET['endTime']) ? $_GET['endTime'] : date("Y-m-d\TH:i");
+
+        // $body = [
+        //     "request" => [
+        //         "action" => "cdrapi",
+        //         "cookie" => $cookieKey,
+        //         "format" => "json",
+        //         "startTime" => $startTime,
+        //         "endTime" => $endTime
+        //     ]
+        // ];
+
+            // Устанавливаем стандартные значения, если они не переданы
+        $params['action'] = 'cdrapi';
+        $params['cookie'] = $cookieKey;
+        $params['format'] = $params['format'] ?? 'json';
+        $params['startTime'] = $params['startTime'] ?? date("Y-m-d", strtotime("-30 days"));
+        $params['endTime'] = $params['endTime'] ?? date("Y-m-d\TH:i");
+
+        // Формируем тело запроса
         $body = [
-            "request" => [
-                "action" => "cdrapi",
-                "cookie" => $cookieKey,
-                "format" => "json",
-                "startTime" => $startTime,
-                "endTime" => $endTime
-            ]
+            "request" => $params
         ];
 
         $response = $this->makeRequest("/api/v1", $body);
