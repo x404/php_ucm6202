@@ -100,8 +100,6 @@ class CdrApiClient {
         $params['startTime'] = $params['startTime'] ?? date("Y-m-d", strtotime("-30 days"));
         $params['endTime'] = $params['endTime'] ?? date("Y-m-d\TH:i");
 
-        echo  date("Y-m-d\TH:i");
-
         // Формируем тело запроса
         $body = [
             "request" => $params
