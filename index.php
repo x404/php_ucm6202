@@ -100,6 +100,8 @@ class CdrApiClient {
         $params['startTime'] = $params['startTime'] ?? date("Y-m-d", strtotime("-30 days"));
         $params['endTime'] = $params['endTime'] ?? date("Y-m-d\TH:i");
 
+        echo  date("Y-m-d\TH:i");
+
         // Формируем тело запроса
         $body = [
             "request" => $params
@@ -163,7 +165,7 @@ class CdrApiClient {
 
 
 
-
+date_default_timezone_set('Europe/Kiev');
 // Initialize API client
 $client = new CdrApiClient();
 
